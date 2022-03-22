@@ -1,1 +1,1 @@
-web: gunicorn django-test-v4.wsgi
+web: gunicorn auth_system.wsgi
