@@ -198,6 +198,12 @@ AUTH_USER_MODEL = 'accounts.UserAccount'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    'https://enigmatic-temple-06724.herokuapp.com',
+]
+
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
