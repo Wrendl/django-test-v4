@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from djoser.views import UserViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
+from .views import UserProfileListCreateView
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -11,5 +12,7 @@ urlpatterns = [
     path("activation/", UserViewSet.as_view({"post": "activation"}), name="activate"),
     path("reset-password/", UserViewSet.as_view({"post": "reset_password"}), name="reset_password"),
     path("reset-password-confirm/<str:uid>/<str:token>/", UserViewSet.as_view({"post": "reset_password_confirm"}), name="reset_password_confirm"),
-    path("activate/<str:uid>/<str:token>/", views.index1)
+    path("activate/<str:uid>/<str:token>/", views.confirm, name="confirm_account"),
+    path('private/', views.private, name='private'),
+    path("all-profiles/", UserProfileListCreateView.as_view(), name="all-profiles"),
 ]

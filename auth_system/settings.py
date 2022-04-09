@@ -157,7 +157,8 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+# MEDIA_URL = '/media/'
+MEDIA_URL = 'https://raw.githubusercontent.com/Wrendl/django-test-v4/main/media/'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
