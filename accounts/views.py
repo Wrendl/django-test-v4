@@ -10,8 +10,8 @@ def index(request):
 
 
 def confirm(request, uid, token):
-    if request.method == 'GET':
-        return render(request, 'accounts/confirm.html', {'uid': uid, 'token': token})
+    # return render(request, 'accounts/ConfirmationPage.html', {'uid': uid, 'token': token})
+    return render(request, 'accounts/ConfirmationPage.html')
 
 
 def private(request):
@@ -21,4 +21,3 @@ def private(request):
 class UserProfileListCreateView(ListCreateAPIView):
     queryset = UserAccount.objects.all()
     serializer_class = UserCreateSerializer
-    permission_classes = [IsAuthenticated]

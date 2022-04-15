@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
-from pathlib import Path
 import dj_database_url
+from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'djoser',
     'auth_system',
     'accounts',
+    'audio_library',
 ]
 
 MIDDLEWARE = [
@@ -157,20 +159,22 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# MEDIA_URL = '/media/'
-MEDIA_URL = 'https://raw.githubusercontent.com/Wrendl/django-test-v4/main/media/'
+MEDIA_URL = '/media/'
+# MEDIA_URL = 'https://raw.githubusercontent.com/Wrendl/django-test-v4/main/media/'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-      'rest_framework.permissions.IsAuthenticated'
-    ),
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #   # 'rest_framework.permissions.IsAuthenticated',
+    #   'rest_framework.permissions.IsAdminUser'
+    # ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
 
 SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'AUTH_HEADER_TYPES': ('JWT',),
 }
 
 DJOSER = {
