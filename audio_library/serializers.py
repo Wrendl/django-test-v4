@@ -61,3 +61,4 @@ class CreatePlayListSerializer(BaseSerializer):
 
 class PlayListSerializer(CreatePlayListSerializer):
     tracks = AuthorTrackSerializer(many=True, read_only=True)
+
