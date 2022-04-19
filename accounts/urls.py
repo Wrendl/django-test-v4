@@ -9,7 +9,7 @@ urlpatterns = [
 
     path('sign-up/', UserViewSet.as_view({'post': 'create'}), name="sign-up"),
     path("login/", TokenObtainPairView.as_view(), name="login"),
-    path('profile/', UserViewSet.as_view({'get': 'me', 'patch': 'partial_update'}), name="profile"),
+    path('profile/', UserViewSet.as_view({'get': 'me', 'patch': 'me'}), name="profile"),
 
     path("activation/", UserViewSet.as_view({"post": "activation"}), name="activate"),
     # path("activate/<str:uid>/<str:token>/", views.confirm, name="confirm_account"),
