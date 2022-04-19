@@ -2,7 +2,7 @@ from django.core.validators import FileExtensionValidator
 from django.db import models
 from accounts.models import UserAccount
 from base.services import get_path_upload_cover_album, validate_size_image, get_path_upload_track, \
-    get_path_upload_playlist
+    get_path_upload_playlist, get_default_cover
 
 
 class Genre(models.Model):
@@ -46,10 +46,11 @@ class Track(models.Model):
 class Playlist(models.Model):
     user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='playlist')
     title = models.CharField(max_length=100)
-    tracks = models.ManyToManyField(Track, related_name='track_playlist')
+    tracks = models.ManyToManyField(Track, related_name='track_playlist', blank=True, null=True, )
     cover = models.ImageField(
         upload_to=get_path_upload_playlist,
         blank=True,
         null=True,
+        default='',
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png']), validate_size_image],
     )

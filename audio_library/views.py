@@ -65,7 +65,7 @@ class PlayListView(MixedSerializer, viewsets.ModelViewSet):
     # permission_classes = [IsAuthor]
     serializer_class = serializers.CreatePlayListSerializer
     serializer_classes_by_action = {
-        'list': serializers.AuthorTrackSerializer
+        'list': serializers.PlayListSerializer
     }
 
     def get_queryset(self):

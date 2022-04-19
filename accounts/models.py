@@ -1,7 +1,7 @@
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from base.services import get_path_upload_avatar, validate_size_image
+from base.services import get_path_upload_avatar, validate_size_image, get_default_avatar
 
 
 class UserAccountManager(BaseUserManager):
@@ -44,6 +44,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
         upload_to=get_path_upload_avatar,
         blank=True,
         null=True,
+        default=get_default_avatar,
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png']), validate_size_image]
     )
 

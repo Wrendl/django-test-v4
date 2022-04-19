@@ -52,7 +52,7 @@ class AuthorTrackSerializer(CreateAuthorTrackSerializer):
 class CreatePlayListSerializer(BaseSerializer):
     class Meta:
         model = models.Playlist
-        fields = ('id', 'title', 'cover', 'tracks')
+        fields = ('id', 'title', 'tracks', 'cover', )
 
     def update(self, instance, validated_data):
         delete_old_file(instance.cover.path)
