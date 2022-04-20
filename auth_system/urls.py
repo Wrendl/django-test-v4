@@ -8,4 +8,3 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('audio/', include('audio_library.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

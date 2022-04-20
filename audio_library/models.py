@@ -51,6 +51,6 @@ class Playlist(models.Model):
         upload_to=get_path_upload_playlist,
         blank=True,
         null=True,
-        default='',
+        default=get_default_cover(),
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png']), validate_size_image],
     )

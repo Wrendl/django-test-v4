@@ -49,14 +49,10 @@ def delete_old_file(path_file):
 
 
 def get_default_avatar():
-    return ''
-    # src = os.path.join(MEDIA_ROOT, 'default\\default-user-image.png')
-    # dst = os.path.join(MEDIA_ROOT, 'default\\default-user-image.png')
-    # shutil.copy(src, dst)
-    # default_avatar
-    # return default_avatar
-
-
-def get_default_cover(instance):
     default_cover = os.path.join(MEDIA_ROOT, 'default\\default-user-image.png')
+    return default_cover
+
+
+def get_default_cover():
+    default_cover = 'default\\default-cover.png'
     return default_cover
