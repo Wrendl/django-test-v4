@@ -8,9 +8,30 @@
 </head>
 <body>
     <div style="max-width: 500px; margin: 15% auto; text-align: center">
-        <h1>Welcome!</h1>
+        <h1>Welcome!</h1><br>
         <p>We're excited to have you get started. First, you need to confirm your account. Just press the buttom below.</p>
-        <a href="http://localhost:8000/"><button style="width: 100%; height: 45px; color: #fff; margin-top: 30px; background: #6900FF; border-radius: 26px;">VERIFY</button></a>
+        <a href="http://localhost:8080/"><button id="post-btn" style="width: 100%; height: 45px; color: #fff; margin-top: 30px; background: #6900FF; border-radius: 26px;">VERIFY</button></a>
     </div>
+    <script>
+        const button = document.getElementById('post-btn');
+
+        button.addEventListener('click', async _ => {
+          try {
+            const response = await fetch('http://127.0.0.1:8000/activation/', {
+              method: 'post',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  uid: "{{uid}}",
+                  token: "{{token}}"
+                })
+            });
+            console.log('Completed!', response);
+          } catch(err) {
+            console.error(err);
+          }
+        });
+    </script>
 </body>
 </html>

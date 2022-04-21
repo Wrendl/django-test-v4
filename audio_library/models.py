@@ -54,3 +54,8 @@ class Playlist(models.Model):
         default=get_default_cover(),
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png']), validate_size_image],
     )
+
+
+class LikedSongs(models.Model):
+    user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='liked_songs')
+    # tracks = models.ManyToManyField(Track, related_name='track_liked_songs', blank=True, null=True, )

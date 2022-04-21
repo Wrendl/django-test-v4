@@ -79,12 +79,6 @@ class PlayListView(MixedSerializer, viewsets.ModelViewSet):
         instance.delete()
 
 
-# class TrackListView(generics.ListAPIView):
-#     queryset = models.Track.objects.all()
-#     serializer_class = serializers.AuthorTrackSerializer
-#     pagination_class = Pagination
-
-
 class StreamingFileView(views.APIView):
 
     def set_play(self, track):
@@ -98,3 +92,10 @@ class StreamingFileView(views.APIView):
             return FileResponse(open(track.file.path, 'rb'), filename=track.file.name)
         else:
             return Http404
+
+
+class LikedSongsView(viewsets.ModelViewSet):
+    serializer_class = serializers.LikedSongsSerializer
+
+    def get_queryset(self):
+        return models.LikedSongs.objects.filter(user=self.request.user)

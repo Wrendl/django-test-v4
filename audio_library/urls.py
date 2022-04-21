@@ -17,4 +17,7 @@ urlpatterns = [
     path('playlist/', views.PlayListView.as_view({'get': 'list', 'post': 'create'})),
     path('playlist/<int:pk>/', views.PlayListView.as_view({'patch': 'partial_update', 'delete': 'destroy'})),
 
+    path('liked-songs/', views.LikedSongsView.as_view({'get': 'list'})),
+    # path('liked-songs/<int:pk>/', views.PlayListView.as_view({'patch': 'partial_update', 'delete': 'destroy'})),
+
 ]

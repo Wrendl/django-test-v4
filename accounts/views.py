@@ -10,12 +10,12 @@ def index(request):
 
 
 def confirm(request, uid, token):
-    # return render(request, 'accounts/ConfirmationPage.html', {'uid': uid, 'token': token})
-    return render(request, 'accounts/ConfirmationPage.html')
+    return render(request, 'accounts/ConfirmationPage.html', {'uid': uid, 'token': token})
+    # return render(request, 'accounts/ConfirmationPage.html')
 
 
-def private(request):
-    return render(request, 'accounts/private.html')
+def reset_password(request, uid, token):
+    return render(request, 'accounts/ResetPassword.html', {'uid': uid, 'token': token})
 
 
 class UserProfileListCreateView(ListCreateAPIView):

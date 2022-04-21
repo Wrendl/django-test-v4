@@ -1,8 +1,6 @@
 import os
 import shutil
-
 from django.core.exceptions import ValidationError
-
 from auth_system.settings import MEDIA_ROOT
 
 
@@ -44,13 +42,14 @@ def validate_size_image(file_obj):
 
 
 def delete_old_file(path_file):
-    if os.path.exists(path_file):
-        os.remove(path_file)
+    if path_file != r'C:\Users\Nariman\Desktop\old\diplom\django-test-v4\media\default\default-cover.png':
+        if os.path.exists(path_file):
+            os.remove(path_file)
 
 
 def get_default_avatar():
-    default_cover = os.path.join(MEDIA_ROOT, 'default\\default-user-image.png')
-    return default_cover
+    default_avatar = 'default\\default-user-image.png'
+    return default_avatar
 
 
 def get_default_cover():

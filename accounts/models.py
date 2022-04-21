@@ -5,12 +5,12 @@ from base.services import get_path_upload_avatar, validate_size_image, get_defau
 
 
 class UserAccountManager(BaseUserManager):
-    def create_user(self, email, name, gender, date_of_birth, password=None, is_superuser=False, avatar=None):
+    def create_user(self, email, name, gender, date_of_birth, password=None, is_superuser=False):
         if not email:
             raise ValueError('Users must have an email address')
 
         email = self.normalize_email(email)
-        user = self.model(email=email, name=name, gender=gender, date_of_birth=date_of_birth, is_superuser=is_superuser, avatar=avatar)
+        user = self.model(email=email, name=name, gender=gender, date_of_birth=date_of_birth, is_superuser=is_superuser)
 
         user.set_password(password)
         user.save()
@@ -44,7 +44,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
         upload_to=get_path_upload_avatar,
         blank=True,
         null=True,
-        default=get_default_avatar,
+        default=get_default_avatar(),
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png']), validate_size_image]
     )
 

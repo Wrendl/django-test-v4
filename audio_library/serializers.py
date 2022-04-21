@@ -62,3 +62,16 @@ class CreatePlayListSerializer(BaseSerializer):
 class PlayListSerializer(CreatePlayListSerializer):
     tracks = AuthorTrackSerializer(many=True, read_only=True)
 
+
+# class CreateLikedSongsSerializer(BaseSerializer):
+#     class Meta:
+#         model = models.LikedSongs
+#         fields = ('id', 'tracks', )
+
+
+class LikedSongsSerializer(BaseSerializer):
+    class Meta:
+        model = models.LikedSongs
+        fields = ('id', )
+
+    # tracks = AuthorTrackSerializer(many=True, read_only=True)
