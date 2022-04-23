@@ -22,7 +22,7 @@ class Album(models.Model):
         upload_to=get_path_upload_cover_album,
         blank=True,
         null=True,
-        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png']), validate_size_image],
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg']), validate_size_image],
     )
     # REQUIRED_FIELDS = ['user_name', 'name', 'description']
 
@@ -52,7 +52,7 @@ class Playlist(models.Model):
         blank=True,
         null=True,
         default=get_default_cover(),
-        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png']), validate_size_image],
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg']), validate_size_image],
     )
 
 
