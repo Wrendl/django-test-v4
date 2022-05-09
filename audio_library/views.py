@@ -1,12 +1,10 @@
 import os
-
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponse
 from django.shortcuts import render
 from rest_framework import generics, parsers, viewsets, views, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-
-from base.classes import MixedSerializer, Pagination
+from base.classes import MixedSerializer
 from base.services import delete_old_file
 from . import models, serializers
 
@@ -16,11 +14,36 @@ class GenreView(generics.ListAPIView):
     serializer_class = serializers.GenreSerializer
 
 
-class AlbumView(viewsets.ModelViewSet):
-    parser_classes = (parsers.MultiPartParser,)
-    serializer_class = serializers.AlbumSerializer
+class SocialLinksView(generics.ListAPIView):
+    queryset = models.SocialLinks.objects.all()
+    serializer_class = serializers.SocialLinksSerializer
 
-    # permission_classes = [IsAuthor]
+
+class ArtistView(MixedSerializer, viewsets.ModelViewSet):
+    parser_classes = (parsers.MultiPartParser,)
+    serializer_class = serializers.CreateArtistSerializer
+    serializer_classes_by_action = {
+        'list': serializers.ArtistSerializer
+    }
+
+    def get_queryset(self):
+        return models.Artist.objects.filter()
+        # return models.Album.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        delete_old_file(instance.avatar.path)
+        instance.delete()
+
+
+class AlbumView(MixedSerializer, viewsets.ModelViewSet):
+    parser_classes = (parsers.MultiPartParser,)
+    serializer_class = serializers.CreateAlbumSerializer
+    serializer_classes_by_action = {
+        'list': serializers.AlbumSerializer
+    }
 
     def get_queryset(self):
         return models.Album.objects.filter()
@@ -74,9 +97,17 @@ class PlayListView(MixedSerializer, viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    def perform_destroy(self, instance):
+    def update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        instance = self.get_object()
+        instance.tracks += request.tracks
+        instance.save(user=self.request.user)
+
+    def destroy(self, request,  *args, **kwargs):
+        instance = self.get_object()
         delete_old_file(instance.cover.path)
-        instance.delete()
+        self.perform_destroy(instance)
+        return Response({"detail": "deleted"}, status=status.HTTP_200_OK)
 
 
 class StreamingFileView(views.APIView):
@@ -92,10 +123,3 @@ class StreamingFileView(views.APIView):
             return FileResponse(open(track.file.path, 'rb'), filename=track.file.name)
         else:
             return Http404
-
-
-class LikedSongsView(viewsets.ModelViewSet):
-    serializer_class = serializers.LikedSongsSerializer
-
-    def get_queryset(self):
-        return models.LikedSongs.objects.filter(user=self.request.user)

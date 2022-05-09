@@ -10,9 +10,9 @@ class GenreAdmin(admin.ModelAdmin):
 
 @admin.register(models.Album)
 class AlbumAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user_name', 'name')
+    list_display = ('id', 'name')
     list_display_links = ('name', )
-    list_filter = ('user_name', )
+    list_filter = ('name', )
 
 
 @admin.register(models.Track)
@@ -29,4 +29,16 @@ class PlaylistAdmin(admin.ModelAdmin):
     list_display_links = ('title', )
     list_filter = ('user', )
     search_fields = ('user', 'track__title')
+
+
+@admin.register(models.SocialLinks)
+class SocialLinksAdmin(admin.ModelAdmin):
+    list_display = ('id', 'link', 'cover')
+    list_display_links = ('link', )
+
+
+@admin.register(models.Artist)
+class ArtistAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'avatar', )
+    list_display_links = ('name', )
 

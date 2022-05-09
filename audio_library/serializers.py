@@ -14,14 +14,42 @@ class GenreSerializer(BaseSerializer):
         fields = ('id', 'name', )
 
 
-class AlbumSerializer(BaseSerializer):
+class SocialLinksSerializer(BaseSerializer):
     class Meta:
-        model = models.Album
-        fields = ('id', 'user_name', 'name', 'description', 'cover', 'private', )
+        model = models.SocialLinks
+        fields = ('id', 'link', 'cover', )
 
     def update(self, instance, validated_data):
         delete_old_file(instance.cover.path)
         return super().update(instance, validated_data)
+
+
+class CreateArtistSerializer(BaseSerializer):
+    class Meta:
+        model = models.Artist
+        fields = ('id', 'name', 'avatar', 'social_links', )
+
+    def update(self, instance, validated_data):
+        delete_old_file(instance.cover.path)
+        return super().update(instance, validated_data)
+
+
+class ArtistSerializer(CreateArtistSerializer):
+    social_links = SocialLinksSerializer(many=True, read_only=True)
+
+
+class CreateAlbumSerializer(BaseSerializer):
+    class Meta:
+        model = models.Album
+        fields = ('id', 'author', 'name', 'description', 'cover', 'private', )
+
+    def update(self, instance, validated_data):
+        delete_old_file(instance.cover.path)
+        return super().update(instance, validated_data)
+
+
+class AlbumSerializer(CreateAlbumSerializer):
+    author = ArtistSerializer(many=True, read_only=True)
 
 
 class CreateAuthorTrackSerializer(BaseSerializer):
@@ -61,17 +89,3 @@ class CreatePlayListSerializer(BaseSerializer):
 
 class PlayListSerializer(CreatePlayListSerializer):
     tracks = AuthorTrackSerializer(many=True, read_only=True)
-
-
-# class CreateLikedSongsSerializer(BaseSerializer):
-#     class Meta:
-#         model = models.LikedSongs
-#         fields = ('id', 'tracks', )
-
-
-class LikedSongsSerializer(BaseSerializer):
-    class Meta:
-        model = models.LikedSongs
-        fields = ('id', )
-
-    # tracks = AuthorTrackSerializer(many=True, read_only=True)

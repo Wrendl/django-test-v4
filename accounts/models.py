@@ -17,14 +17,13 @@ class UserAccountManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, email, name, gender, date_of_birth, password=None, avatar=None, **kwargs):
+    def create_superuser(self, email, name, gender, date_of_birth, password=None, **kwargs):
         user = self.create_user(
             email,
             name=name,
             gender=gender,
             date_of_birth=date_of_birth,
             password=password,
-            avatar=avatar,
             is_superuser=True,
             **kwargs,
         )
@@ -45,7 +44,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
         blank=True,
         null=True,
         default=get_default_avatar(),
-        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png']), validate_size_image]
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg']), validate_size_image]
     )
 
     is_admin = models.BooleanField(default=False)
@@ -55,7 +54,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     objects = UserAccountManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'gender', 'date_of_birth', 'avatar']
+    REQUIRED_FIELDS = ['name', 'gender', 'date_of_birth']
 
     @property
     def is_authenticated(self):

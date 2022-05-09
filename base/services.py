@@ -55,3 +55,11 @@ def get_default_avatar():
 def get_default_cover():
     default_cover = 'default\\default-cover.png'
     return default_cover
+
+
+def get_path_upload_artist(instance, file):
+    return f'artists/{instance.id}/{file}'
+
+
+def get_path_upload_social_links(instance, file):
+    return f'social/{instance.id}/{file}'
