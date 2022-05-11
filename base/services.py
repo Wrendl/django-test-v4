@@ -15,7 +15,7 @@ def get_path_upload_cover_album(instance, file):
     """
     path to avatar, format: (media)/album/user_id/photo.jpg
     """
-    return f'album/user_{instance.user_name}/{file}'
+    return f'album/user_{instance.name}/{file}'
 
 
 def get_path_upload_track(instance, file):
