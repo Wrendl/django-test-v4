@@ -15,13 +15,6 @@ class Genre(models.Model):
 
 class SocialLinks(models.Model):
     link = models.CharField(max_length=300)
-    cover = models.ImageField(
-        upload_to=get_path_upload_social_links,
-        blank=True,
-        null=True,
-        default=get_default_cover(),
-        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg']), validate_size_image],
-    )
 
 
 class Artist(models.Model):

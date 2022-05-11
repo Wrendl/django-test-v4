@@ -17,11 +17,7 @@ class GenreSerializer(BaseSerializer):
 class SocialLinksSerializer(BaseSerializer):
     class Meta:
         model = models.SocialLinks
-        fields = ('id', 'link', 'cover', )
-
-    def update(self, instance, validated_data):
-        delete_old_file(instance.cover.path)
-        return super().update(instance, validated_data)
+        fields = ('id', 'link', )
 
 
 class CreateArtistSerializer(BaseSerializer):
