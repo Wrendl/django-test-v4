@@ -33,8 +33,7 @@ class PlaylistAdmin(admin.ModelAdmin):
 
 @admin.register(models.SocialLinks)
 class SocialLinksAdmin(admin.ModelAdmin):
-    list_display = ('id', 'link', 'cover')
-    list_display_links = ('link', )
+    list_display = ('id', 'link', )
 
 
 @admin.register(models.Artist)
