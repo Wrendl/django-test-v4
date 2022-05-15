@@ -16,6 +16,9 @@ class Genre(models.Model):
 class SocialLinks(models.Model):
     link = models.CharField(max_length=300)
 
+    def __str__(self):
+        return self.link
+
 
 class Artist(models.Model):
     name = models.CharField(max_length=100)
@@ -27,6 +30,9 @@ class Artist(models.Model):
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg']), validate_size_image]
     )
     social_links = models.ManyToManyField(SocialLinks, related_name='social_links', blank=True, null=True, )
+
+    def __str__(self):
+        return self.name
 
 
 class Album(models.Model):
@@ -42,7 +48,9 @@ class Album(models.Model):
         null=True,
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg']), validate_size_image],
     )
-    # REQUIRED_FIELDS = ['user_name', 'name', 'description']
+
+    def __str__(self):
+        return self.name
 
 
 class Track(models.Model):
@@ -58,7 +66,7 @@ class Track(models.Model):
     plays_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f'{self.title}'
+        return self.title
 
 
 class Playlist(models.Model):
@@ -72,6 +80,9 @@ class Playlist(models.Model):
         default=get_default_cover(),
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg']), validate_size_image],
     )
+
+    def __str__(self):
+        return self.title
 
 
 # class LikedArtist(models.Model):
