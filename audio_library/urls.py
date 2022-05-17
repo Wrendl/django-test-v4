@@ -17,7 +17,7 @@ urlpatterns = [
     path('stream-track/<int:pk>/', views.StreamingFileView.as_view()),
 
     path('playlist/', views.PlayListView.as_view({'get': 'list', 'post': 'create'})),
-    path('playlist/<int:pk>/', views.PlayListView.as_view({'patch': 'partial_update', 'delete': 'destroy'})),
+    path('playlist/<int:pk>/', views.PlayListView.as_view({'get': 'get_object', 'delete': 'destroy'})),
     path('liked-songs/', views.LikedSongsView.as_view({'get': 'list'})),
 
 ]

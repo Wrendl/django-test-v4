@@ -97,6 +97,17 @@ class PlayListView(MixedSerializer, viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    def retrieve(self, pk=None):
+        queryset = User.objects.all()
+        user = get_object_or_404(queryset, pk=pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+    # def patch(self, request, pk):
+    #     testmodel_object = self.get_object(pk)
+    #     serializer = TestModelSerializer(testmodel_object, data=request.data,
+    #                                      partial=True)  # set partial=True to update a data partially
+    #     if serializer.is_valid():
+    #         serializer.save()
     # def update(self, request, *args, **kwargs):
     #     kwargs['partial'] = True
     #     instance = self.get_object()
