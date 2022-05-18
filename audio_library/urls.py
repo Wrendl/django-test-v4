@@ -3,21 +3,25 @@ from . import views
 
 urlpatterns = [
     path('genre/', views.GenreView.as_view(), name='genre_view'),
+    path('social-links/', views.SocialLinksView.as_view()),
 
     path('album/', views.AlbumView.as_view({'get': 'list'})),
-    path('social-links/', views.SocialLinksView.as_view()),
-    path('artist/', views.ArtistView.as_view({'get': 'list'})),
-    # path('album/<int:pk>/', views.AlbumView.as_view({'patch': 'partial_update', 'delete': 'destroy'})),
+    path('album/<int:pk>/', views.OneAlbumView.as_view({'get': 'list'})),
 
-    # path('author-album/<int:pk>/', views.PublicAlbumView.as_view()),
+    path('artist/', views.ArtistView.as_view({'get': 'list'})),
+    path('artist/<int:pk>/', views.OneArtistView.as_view({'get': 'list'})),
 
     path('track/', views.TrackView.as_view({'get': 'list'})),
-    # path('track/<int:pk>/', views.TrackView.as_view({'patch': 'partial_update', 'delete': 'destroy'})),
 
     path('stream-track/<int:pk>/', views.StreamingFileView.as_view()),
 
     path('playlist/', views.PlayListView.as_view({'get': 'list', 'post': 'create'})),
-    path('playlist/<int:pk>/', views.PlayListView.as_view({'get': 'get_object', 'delete': 'destroy'})),
+    path('playlist/<int:pk>/', views.PlayListView.as_view({'patch': 'partial_update', 'delete': 'destroy'})),
+    path('playlist-get/<int:pk>/', views.OnePlayListView.as_view({'get': 'list'})),
+    path('playlist/<int:pk>/<int:pk1>/', views.OnePlayListView.as_view({'patch': 'partial_update', 'delete': 'destroy'})),
+
     path('liked-songs/', views.LikedSongsView.as_view({'get': 'list'})),
+    path('liked-songs/<int:pk>/<int:pk1>/', views.LikedSongsView.as_view({'patch': 'partial_update', 'delete': 'destroy'})),
 
 ]
+

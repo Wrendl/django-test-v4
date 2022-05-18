@@ -1,4 +1,6 @@
 import os
+from itertools import chain
+
 from django.http import FileResponse, Http404, HttpResponse
 from django.shortcuts import render
 from rest_framework import generics, parsers, viewsets, views, status
@@ -38,6 +40,19 @@ class ArtistView(MixedSerializer, viewsets.ModelViewSet):
         instance.delete()
 
 
+class OneArtistView(MixedSerializer, viewsets.ModelViewSet):
+    parser_classes = (parsers.MultiPartParser,)
+    serializer_class = serializers.CreateArtistSerializer
+    serializer_classes_by_action = {
+        'list': serializers.AuthorTrackSerializer,
+        'list1': serializers.AlbumSerializer
+    }
+
+    def get_queryset(self):
+        album = models.Album.objects.filter(author=self.kwargs.get('pk'))
+        return models.Track.objects.filter(album=album)
+
+
 class AlbumView(MixedSerializer, viewsets.ModelViewSet):
     parser_classes = (parsers.MultiPartParser,)
     serializer_class = serializers.CreateAlbumSerializer
@@ -47,7 +62,6 @@ class AlbumView(MixedSerializer, viewsets.ModelViewSet):
 
     def get_queryset(self):
         return models.Album.objects.filter()
-        # return models.Album.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save()
@@ -55,6 +69,17 @@ class AlbumView(MixedSerializer, viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         delete_old_file(instance.cover.path)
         instance.delete()
+
+
+class OneAlbumView(MixedSerializer, viewsets.ModelViewSet):
+    parser_classes = (parsers.MultiPartParser,)
+    serializer_classes_by_action = {
+        'list': serializers.AuthorTrackSerializer
+    }
+
+    def get_queryset(self):
+        # album = models.Album.objects.filter(id=1)
+        return models.Track.objects.filter(album=self.kwargs.get('pk'))
 
 
 class PublicAlbumView(generics.ListAPIView):
@@ -92,33 +117,45 @@ class PlayListView(MixedSerializer, viewsets.ModelViewSet):
     }
 
     def get_queryset(self):
-        return models.Playlist.objects.filter(user=self.request.user)[1:]
+        all_playlist = models.Playlist.objects.filter(user=self.request.user)
+        return all_playlist.exclude(id=10)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-    def retrieve(self, pk=None):
-        queryset = User.objects.all()
-        user = get_object_or_404(queryset, pk=pk)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-    # def patch(self, request, pk):
-    #     testmodel_object = self.get_object(pk)
-    #     serializer = TestModelSerializer(testmodel_object, data=request.data,
-    #                                      partial=True)  # set partial=True to update a data partially
-    #     if serializer.is_valid():
-    #         serializer.save()
-    # def update(self, request, *args, **kwargs):
-    #     kwargs['partial'] = True
-    #     instance = self.get_object()
-    #     instance.tracks += request.tracks
-    #     instance.save(user=self.request.user)
 
     def destroy(self, request,  *args, **kwargs):
         instance = self.get_object()
         delete_old_file(instance.cover.path)
         self.perform_destroy(instance)
         return Response({"detail": "deleted"}, status=status.HTTP_200_OK)
+
+
+class OnePlayListView(MixedSerializer, viewsets.ModelViewSet):
+    parser_classes = (parsers.MultiPartParser,)
+    # permission_classes = [IsAuthor]
+    serializer_class = serializers.CreatePlayListSerializer
+    serializer_classes_by_action = {
+        'list': serializers.PlayListSerializer
+    }
+
+    def get_queryset(self):
+        return models.Playlist.objects.filter(user=self.request.user, id=self.kwargs.get('pk'))
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        track = models.Track.objects.filter(id=self.kwargs.get('pk1'))
+        ls1 = models.Playlist(id=self.kwargs.get('pk'), user=self.request.user, title=instance.title,
+                              cover=instance.cover)
+        results = list(chain(instance.tracks.all(), track))
+        ls1.tracks.set(results)
+        ls1.save()
+        return Response({'Added': self.kwargs.get('pk1')}, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.tracks.remove(self.kwargs.get('pk1'))
+        instance.save()
+        return Response({'Deleted': self.kwargs.get('pk1')}, status=status.HTTP_200_OK)
 
 
 class StreamingFileView(views.APIView):
@@ -145,16 +182,19 @@ class LikedSongsView(MixedSerializer, viewsets.ModelViewSet):
     }
 
     def get_queryset(self):
-        return models.Playlist.objects.filter(user=self.request.user)[:1]
+        return models.Playlist.objects.filter(user=self.request.user, id=1)
 
-    # def update(self, request, *args, **kwargs):
-    #     kwargs['partial'] = True
-    #     instance = self.get_object()
-    #     instance.tracks += request.tracks
-    #     instance.save(user=self.request.user)
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        track = models.Track.objects.filter(id=self.kwargs.get('pk1'))
+        ls1 = models.Playlist(id=self.kwargs.get('pk'), user=self.request.user, title=instance.title, cover=instance.cover)
+        results = list(chain(instance.tracks.all(), track))
+        ls1.tracks.set(results)
+        ls1.save()
+        return Response({'Added': self.kwargs.get('pk1')}, status=status.HTTP_200_OK)
 
     def destroy(self, request,  *args, **kwargs):
         instance = self.get_object()
-        delete_old_file(instance.cover.path)
-        self.perform_destroy(instance)
-        return Response({"detail": "deleted"}, status=status.HTTP_200_OK)
+        instance.tracks.remove(self.kwargs.get('pk1'))
+        instance.save()
+        return Response({'Deleted': self.kwargs.get('pk1')}, status=status.HTTP_200_OK)
