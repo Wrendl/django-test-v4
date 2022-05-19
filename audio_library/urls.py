@@ -21,7 +21,7 @@ urlpatterns = [
     path('playlist/<int:pk>/<int:pk1>/', views.OnePlayListView.as_view({'patch': 'partial_update', 'delete': 'destroy'})),
 
     path('liked-songs/', views.LikedSongsView.as_view({'get': 'list'})),
-    path('liked-songs/<int:pk>/<int:pk1>/', views.LikedSongsView.as_view({'patch': 'partial_update', 'delete': 'destroy'})),
+    path('liked-songs/<int:pk>/', views.LikedSongsView.as_view({'patch': 'partial_update', 'delete': 'destroy'})),
 
 ]
 

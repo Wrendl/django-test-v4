@@ -117,10 +117,10 @@ class PlayListView(MixedSerializer, viewsets.ModelViewSet):
 
     def get_queryset(self):
         all_playlist = models.Playlist.objects.filter(user=self.request.user)
-        return all_playlist.exclude(id=1)
+        return all_playlist.exclude(title='Liked songs')
 
     def perform_create(self, serializer):
-        if not models.Playlist.objects.filter(user=self.request.user, id=1).exists():
+        if not models.Playlist.objects.filter(user=self.request.user, title='Liked songs').exists():
             liked_model = models.Playlist(user=self.request.user, title='Liked songs',
                                           cover=get_liked_cover())
             liked_model.save()
@@ -188,16 +188,17 @@ class LikedSongsView(MixedSerializer, viewsets.ModelViewSet):
     }
 
     def get_queryset(self):
-        return models.Playlist.objects.filter(user=self.request.user, id=1)
+        return models.Playlist.objects.filter(user=self.request.user, title='Liked songs')
 
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
-        track = models.Track.objects.filter(id=self.kwargs.get('pk1'))
-        ls1 = models.Playlist(id=self.kwargs.get('pk'), user=self.request.user, title=instance.title, cover=instance.cover)
+        track = models.Track.objects.filter(id=self.kwargs.get('pk'))
+        pl_id = models.Playlist.objects.filter(user=self.request.user, title='Liked songs')[0].id
+        ls1 = models.Playlist(id=pl_id, user=self.request.user, title=instance.title, cover=instance.cover)
         results = list(chain(instance.tracks.all(), track))
         ls1.tracks.set(results)
         ls1.save()
-        return Response({'Added': self.kwargs.get('pk1')}, status=status.HTTP_200_OK)
+        return Response({'Added': self.kwargs.get('pk')}, status=status.HTTP_200_OK)
 
     def destroy(self, request,  *args, **kwargs):
         instance = self.get_object()
