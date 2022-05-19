@@ -52,6 +52,12 @@ class Album(models.Model):
     def __str__(self):
         return self.name
 
+    def to_json(self):
+        return {
+            'author': self.author,
+            'name': self.name
+        }
+
 
 class Track(models.Model):
     # user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='tracks')

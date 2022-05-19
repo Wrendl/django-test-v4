@@ -57,6 +57,11 @@ def get_default_cover():
     return default_cover
 
 
+def get_liked_cover():
+    default_cover = 'default\\playlist-cover.png'
+    return default_cover
+
+
 def get_path_upload_artist(instance, file):
     return f'artists/{instance.id}/{file}'
 

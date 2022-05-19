@@ -7,7 +7,7 @@ from rest_framework import generics, parsers, viewsets, views, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from base.classes import MixedSerializer
-from base.services import delete_old_file
+from base.services import delete_old_file, get_liked_cover
 from . import models, serializers
 
 
@@ -42,15 +42,14 @@ class ArtistView(MixedSerializer, viewsets.ModelViewSet):
 
 class OneArtistView(MixedSerializer, viewsets.ModelViewSet):
     parser_classes = (parsers.MultiPartParser,)
-    serializer_class = serializers.CreateArtistSerializer
     serializer_classes_by_action = {
         'list': serializers.AuthorTrackSerializer,
-        'list1': serializers.AlbumSerializer
+        # 'list': serializers.AlbumSerializer
     }
 
     def get_queryset(self):
         album = models.Album.objects.filter(author=self.kwargs.get('pk'))
-        return models.Track.objects.filter(album=album)
+        return models.Track.objects.filter(album=album[0].id)
 
 
 class AlbumView(MixedSerializer, viewsets.ModelViewSet):
@@ -118,10 +117,17 @@ class PlayListView(MixedSerializer, viewsets.ModelViewSet):
 
     def get_queryset(self):
         all_playlist = models.Playlist.objects.filter(user=self.request.user)
-        return all_playlist.exclude(id=10)
+        return all_playlist.exclude(id=1)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        if not models.Playlist.objects.filter(user=self.request.user, id=1).exists():
+            liked_model = models.Playlist(user=self.request.user, title='Liked songs',
+                                          cover=get_liked_cover())
+            liked_model.save()
+        elif self.request.POST['title'] != 'Liked songs':
+            serializer.save(user=self.request.user)
+        else:
+            return Response({"detail": "already have liked songs"}, status=status.HTTP_200_OK)
 
     def destroy(self, request,  *args, **kwargs):
         instance = self.get_object()
