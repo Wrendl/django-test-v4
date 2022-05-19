@@ -191,17 +191,13 @@ class LikedSongsView(MixedSerializer, viewsets.ModelViewSet):
         return models.Playlist.objects.filter(user=self.request.user, title='Liked songs')
 
     def partial_update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        track = models.Track.objects.filter(id=self.kwargs.get('pk'))
-        pl_id = models.Playlist.objects.filter(user=self.request.user, title='Liked songs')[0].id
-        ls1 = models.Playlist(id=pl_id, user=self.request.user, title=instance.title, cover=instance.cover)
-        results = list(chain(instance.tracks.all(), track))
-        ls1.tracks.set(results)
-        ls1.save()
+        instance = models.Playlist.objects.filter(user=self.request.user, title='Liked songs')[0]
+        instance.tracks.add(self.kwargs.get('pk'))
+        instance.save()
         return Response({'Added': self.kwargs.get('pk')}, status=status.HTTP_200_OK)
 
     def destroy(self, request,  *args, **kwargs):
-        instance = self.get_object()
-        instance.tracks.remove(self.kwargs.get('pk1'))
+        instance = models.Playlist.objects.filter(user=self.request.user, title='Liked songs')[0]
+        instance.tracks.remove(self.kwargs.get('pk'))
         instance.save()
-        return Response({'Deleted': self.kwargs.get('pk1')}, status=status.HTTP_200_OK)
+        return Response({'Deleted': self.kwargs.get('pk')}, status=status.HTTP_200_OK)
