@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from djoser.views import UserViewSet
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from .views import UserProfileListCreateView
 
 urlpatterns = [
@@ -9,7 +9,9 @@ urlpatterns = [
 
     path('sign-up/', UserViewSet.as_view({'post': 'create'}), name="sign-up"),
     path("login/", TokenObtainPairView.as_view(), name="login"),
-    path('profile/', UserViewSet.as_view({'get': 'me', 'patch': 'me'}), name="profile"),
+    path("refresh/", TokenRefreshView.as_view(), name="refresh"),
+
+    path('profile/', UserViewSet.as_view({'get': 'me', 'patch': 'me', 'delete': 'me'}), name="profile"),
 
     path("activation/", UserViewSet.as_view({"post": "activation"}), name="activate"),
     path("activate/<str:uid>/<str:token>/", views.confirm, name="confirm_account"),
