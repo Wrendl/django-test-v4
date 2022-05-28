@@ -1,6 +1,7 @@
 import os
 from itertools import chain
 
+from django.db.models import Value, CharField
 from django.http import FileResponse, Http404, HttpResponse
 from django.shortcuts import render
 from rest_framework import generics, parsers, viewsets, views, status
@@ -105,6 +106,18 @@ class TrackView(MixedSerializer, viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         delete_old_file(instance.file.path)
         instance.delete()
+
+
+class TrackUserView(MixedSerializer, viewsets.ModelViewSet):
+    parser_classes = (parsers.MultiPartParser,)
+    # permission_classes = [IsAuthor]
+    serializer_class = serializers.CreateAuthorTrackSerializer
+    serializer_classes_by_action = {
+        'list': serializers.AuthorTrackSerializer
+    }
+
+    def get_queryset(self):
+        return models.Track.objects.filter()
 
 
 class PlayListView(MixedSerializer, viewsets.ModelViewSet):

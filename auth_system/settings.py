@@ -43,9 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
     'rest_framework',
+    'corsheaders',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
-    'corsheaders',
     'djoser',
     'auth_system',
     'accounts',
@@ -207,7 +207,7 @@ AUTH_USER_MODEL = 'accounts.UserAccount'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-CORS_ORIGIN_ALLOW_ALL=True
+CORS_ORIGIN_ALLOW_ALL = True
 
 # CORS_ALLOWED_ORIGINS = [
 #     'http://localhost:8000',
@@ -217,6 +217,8 @@ CORS_ORIGIN_ALLOW_ALL=True
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:8000',
+    'http://localhost:8080',
     'http://127.0.0.1:8000',
+    'http://127.0.0.1:8080',
     'https://enigmatic-temple-06724.herokuapp.com',
 ]

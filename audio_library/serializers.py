@@ -61,6 +61,7 @@ class CreateAuthorTrackSerializer(BaseSerializer):
             'file',
             'create_at',
             'plays_count',
+            'playlists'
         )
 
     def update(self, instance, validated_data):

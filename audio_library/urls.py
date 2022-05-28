@@ -12,6 +12,7 @@ urlpatterns = [
     path('artist/<int:pk>/', views.OneArtistView.as_view({'get': 'list'})),
 
     path('track/', views.TrackView.as_view({'get': 'list'})),
+    path('tracks/', views.TrackUserView.as_view({'get': 'list'})),
 
     path('stream-track/<int:pk>/', views.StreamingFileView.as_view()),
 

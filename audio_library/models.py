@@ -70,6 +70,7 @@ class Track(models.Model):
     )
     create_at = models.DateTimeField(auto_now_add=True)
     plays_count = models.PositiveIntegerField(default=0)
+    playlists = models.JSONField(default={"Liked songs": False})
 
     def __str__(self):
         return self.title
