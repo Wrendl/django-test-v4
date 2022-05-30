@@ -116,7 +116,34 @@ class TrackUserView(MixedSerializer, viewsets.ModelViewSet):
         'list': serializers.AuthorTrackSerializer
     }
 
+    def exist_in_playlist(self, track_id):
+        pl_liked = models.Playlist.objects.filter(user=self.request.user, title='Liked songs')
+        if pl_liked[0].tracks.filter(id=track_id):
+            liked_bool = True
+        else:
+            liked_bool = False
+        playlists = {
+            "Liked songs": liked_bool
+        }
+        all_songs = models.Playlist.objects.filter(user=self.request.user).exclude(title='Liked songs')
+        for pl in all_songs:
+            playlists[pl.id] = False
+            if pl.tracks.filter(id=track_id):
+                playlists[pl.id] = True
+
+        return playlists
+
+    def get_tracks(self, request):
+        queryset = models.Track.objects.filter().values()
+        for track in queryset:
+            models.Track.objects.filter(id=track["id"]).update(
+                playlists=self.exist_in_playlist(track["id"])
+            )
+        # queryset = models.Track.objects.filter().values()
+        # return Response(queryset, status=status.HTTP_200_OK)
+
     def get_queryset(self):
+        self.get_tracks(self.request)
         return models.Track.objects.filter()
 
 
