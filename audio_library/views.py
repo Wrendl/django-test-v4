@@ -285,6 +285,8 @@ class RecAlbumsView(MixedSerializer, viewsets.ModelViewSet):
         album_ids = []
         for p_track in rec_track:
             album_ids.append(p_track['album_id'])
+
+        album_ids = list(set(album_ids))
         return album_ids
 
     def get_queryset(self):
@@ -292,7 +294,48 @@ class RecAlbumsView(MixedSerializer, viewsets.ModelViewSet):
         return models.Album.objects.filter(pk__in=wanted_items)
 
 
-class RecAlbumsView(MixedSerializer, viewsets.ModelViewSet):
+class RecArtistsView(MixedSerializer, viewsets.ModelViewSet):
+    parser_classes = (parsers.MultiPartParser,)
+    serializer_class = serializers.CreateArtistSerializer
+    serializer_classes_by_action = {
+        'list': serializers.ArtistSerializer
+    }
+
+    def get_artist(self, request):
+        wanted_items = get_rec(self)
+        rec_track = models.Track.objects.filter(pk__in=wanted_items).values()
+        album_ids = []
+        for p_track in rec_track:
+            album_ids.append(p_track['album_id'])
+
+        rec_album = models.Album.objects.filter(pk__in=album_ids)
+        artist_ids = []
+        # return Response(rec_album)
+        for i in range(len(rec_album)):
+            x = models.Album.objects.filter(pk__in=album_ids)[i].author.values()
+            artist_ids.append(x[0]['id'])
+
+        artist_ids = list(set(artist_ids))
+        return artist_ids
+
+    def get_queryset(self):
+        wanted_items = self.get_artist(self.request)
+        return models.Artist.objects.filter(pk__in=wanted_items)
+
+
+class TopView(MixedSerializer, viewsets.ModelViewSet):
+    parser_classes = (parsers.MultiPartParser,)
+    serializer_class = serializers.CreateAuthorTrackSerializer
+    serializer_classes_by_action = {
+        'list': serializers.AuthorTrackSerializer
+    }
+
+    def get_queryset(self):
+        popular_tracks = models.Track.objects.filter().order_by('-plays_count')[:15]
+        return popular_tracks
+
+
+class TopAlbumsView(MixedSerializer, viewsets.ModelViewSet):
     parser_classes = (parsers.MultiPartParser,)
     serializer_class = serializers.CreateAlbumSerializer
     serializer_classes_by_action = {
@@ -300,13 +343,42 @@ class RecAlbumsView(MixedSerializer, viewsets.ModelViewSet):
     }
 
     def get_album(self, request):
-        wanted_items = get_rec(self)
-        rec_track = models.Track.objects.filter(pk__in=wanted_items).values()
+        popular_tracks = models.Track.objects.filter().order_by('-plays_count')[:15].values()
         album_ids = []
-        for p_track in rec_track:
+        for p_track in popular_tracks:
             album_ids.append(p_track['album_id'])
+
+        album_ids = list(set(album_ids))
         return album_ids
 
     def get_queryset(self):
         wanted_items = self.get_album(self.request)
         return models.Album.objects.filter(pk__in=wanted_items)
+
+
+class TopArtistsView(MixedSerializer, viewsets.ModelViewSet):
+    parser_classes = (parsers.MultiPartParser,)
+    serializer_class = serializers.CreateArtistSerializer
+    serializer_classes_by_action = {
+        'list': serializers.ArtistSerializer
+    }
+
+    def get_artist(self, request):
+        popular_tracks = models.Track.objects.filter().order_by('-plays_count')[:15].values()
+        album_ids = []
+        for p_track in popular_tracks:
+            album_ids.append(p_track['album_id'])
+
+        rec_album = models.Album.objects.filter(pk__in=album_ids)
+        artist_ids = []
+        for i in range(len(rec_album)):
+            x = models.Album.objects.filter(pk__in=album_ids)[i].author.values()
+            artist_ids.append(x[0]['id'])
+
+        artist_ids = list(set(artist_ids))
+        return artist_ids
+
+    def get_queryset(self):
+        wanted_items = self.get_artist(self.request)
+        return models.Artist.objects.filter(pk__in=wanted_items)
+

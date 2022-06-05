@@ -13,7 +13,11 @@ urlpatterns = [
 
     path('rec/', views.ReccView.as_view({'get': 'list'})),
     path('rec-albums/', views.RecAlbumsView.as_view({'get': 'list'})),
-    # path('rec-artists/', views.RecArtistsView.as_view({'get': 'list'})),
+    path('rec-artists/', views.RecArtistsView.as_view({'get': 'list'})),
+
+    path('top/', views.TopView.as_view({'get': 'list'})),
+    path('top-albums/', views.TopAlbumsView.as_view({'get': 'list'})),
+    path('top-artists/', views.TopArtistsView.as_view({'get': 'list'})),
 
     path('track/', views.TrackUserView.as_view({'get': 'list'})),
     path('tracks/', views.TrackUserView.as_view({'get': 'get_tracks'})),
