@@ -17,7 +17,7 @@ class AlbumAdmin(admin.ModelAdmin):
 
 @admin.register(models.Track)
 class TrackAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'create_at')
+    list_display = ('id', 'title', 'file', 'plays_count')
     list_display_links = ('title', )
     list_filter = ('genre', 'create_at', )
     # search_fields = ('user', 'genre__name')

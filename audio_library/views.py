@@ -9,6 +9,8 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from base.classes import MixedSerializer
 from base.services import delete_old_file, get_liked_cover
+from ml.similarity import get_data
+from ml.test import get_reccomendation
 from . import models, serializers
 
 
@@ -30,6 +32,7 @@ class ArtistView(MixedSerializer, viewsets.ModelViewSet):
     }
 
     def get_queryset(self):
+        get_data(models)
         return models.Artist.objects.filter()
         # return models.Album.objects.filter(user=self.request.user)
 
@@ -139,8 +142,6 @@ class TrackUserView(MixedSerializer, viewsets.ModelViewSet):
             models.Track.objects.filter(id=track["id"]).update(
                 playlists=self.exist_in_playlist(track["id"])
             )
-        # queryset = models.Track.objects.filter().values()
-        # return Response(queryset, status=status.HTTP_200_OK)
 
     def get_queryset(self):
         self.get_tracks(self.request)
@@ -241,3 +242,23 @@ class LikedSongsView(MixedSerializer, viewsets.ModelViewSet):
         instance.tracks.remove(self.kwargs.get('pk'))
         instance.save()
         return Response({'Deleted': self.kwargs.get('pk')}, status=status.HTTP_200_OK)
+
+
+class ReccView(MixedSerializer, viewsets.ModelViewSet):
+    parser_classes = (parsers.MultiPartParser,)
+    serializer_class = serializers.CreateAuthorTrackSerializer
+    serializer_classes_by_action = {
+        'list': serializers.AuthorTrackSerializer
+    }
+
+    def get_rec(self, request):
+        liked_tracks = models.Playlist.objects.filter(user=self.request.user, title='Liked songs')[0].tracks.values()
+        if len(liked_tracks) > 0:
+            tracks = models.Track.objects.filter().values()
+            model = models.Track.objects
+            albums = models.Album.objects
+            rec_arr = get_reccomendation(tracks, model, albums, liked_tracks)
+            return Response(rec_arr)
+
+        return Response(models.Track.objects.filter().order_by('-plays_count')[:15].values())
+

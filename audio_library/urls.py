@@ -11,6 +11,7 @@ urlpatterns = [
     path('artist/', views.ArtistView.as_view({'get': 'list'})),
     path('artist/<int:pk>/', views.OneArtistView.as_view({'get': 'list'})),
 
+    path('rec/', views.ReccView.as_view({'get': 'get_rec'})),
     path('track/', views.TrackUserView.as_view({'get': 'list'})),
     path('tracks/', views.TrackUserView.as_view({'get': 'get_tracks'})),
 
