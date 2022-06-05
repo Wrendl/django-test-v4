@@ -244,6 +244,22 @@ class LikedSongsView(MixedSerializer, viewsets.ModelViewSet):
         return Response({'Deleted': self.kwargs.get('pk')}, status=status.HTTP_200_OK)
 
 
+def get_rec(self):
+    liked_tracks = models.Playlist.objects.filter(user=self.request.user, title='Liked songs')[0].tracks.values()
+    if len(liked_tracks) > 0:
+        tracks = models.Track.objects.filter().values()
+        model = models.Track.objects
+        albums = models.Album.objects
+        wanted_items = get_reccomendation(tracks, model, albums, liked_tracks)
+        return wanted_items
+
+    wanted_items = []
+    popular_tracks = models.Track.objects.filter().order_by('-plays_count')[:15].values()
+    for p_track in popular_tracks:
+        wanted_items.append(p_track['id'])
+    return wanted_items
+
+
 class ReccView(MixedSerializer, viewsets.ModelViewSet):
     parser_classes = (parsers.MultiPartParser,)
     serializer_class = serializers.CreateAuthorTrackSerializer
@@ -251,14 +267,46 @@ class ReccView(MixedSerializer, viewsets.ModelViewSet):
         'list': serializers.AuthorTrackSerializer
     }
 
-    def get_rec(self, request):
-        liked_tracks = models.Playlist.objects.filter(user=self.request.user, title='Liked songs')[0].tracks.values()
-        if len(liked_tracks) > 0:
-            tracks = models.Track.objects.filter().values()
-            model = models.Track.objects
-            albums = models.Album.objects
-            rec_arr = get_reccomendation(tracks, model, albums, liked_tracks)
-            return Response(rec_arr)
+    def get_queryset(self):
+        wanted_items = get_rec(self)
+        return models.Track.objects.filter(pk__in=wanted_items)
 
-        return Response(models.Track.objects.filter().order_by('-plays_count')[:15].values())
 
+class RecAlbumsView(MixedSerializer, viewsets.ModelViewSet):
+    parser_classes = (parsers.MultiPartParser,)
+    serializer_class = serializers.CreateAlbumSerializer
+    serializer_classes_by_action = {
+        'list': serializers.AlbumSerializer
+    }
+
+    def get_album(self, request):
+        wanted_items = get_rec(self)
+        rec_track = models.Track.objects.filter(pk__in=wanted_items).values()
+        album_ids = []
+        for p_track in rec_track:
+            album_ids.append(p_track['album_id'])
+        return album_ids
+
+    def get_queryset(self):
+        wanted_items = self.get_album(self.request)
+        return models.Album.objects.filter(pk__in=wanted_items)
+
+
+class RecAlbumsView(MixedSerializer, viewsets.ModelViewSet):
+    parser_classes = (parsers.MultiPartParser,)
+    serializer_class = serializers.CreateAlbumSerializer
+    serializer_classes_by_action = {
+        'list': serializers.AlbumSerializer
+    }
+
+    def get_album(self, request):
+        wanted_items = get_rec(self)
+        rec_track = models.Track.objects.filter(pk__in=wanted_items).values()
+        album_ids = []
+        for p_track in rec_track:
+            album_ids.append(p_track['album_id'])
+        return album_ids
+
+    def get_queryset(self):
+        wanted_items = self.get_album(self.request)
+        return models.Album.objects.filter(pk__in=wanted_items)

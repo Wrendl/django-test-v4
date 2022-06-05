@@ -96,7 +96,7 @@ def get_reccomendation(tracks, model, albums, liked_tracks):
     print(tracks_user_likes)
     for track_user_likes in tracks_user_likes:
         track_index = get_index_from_title(track_user_likes, df)
-        track_index = int(track_index)
+        track_index = int(track_index)-95
         print(track_index)
         similar_tracks = list(enumerate(cosine_sim[track_index-1]))
         sorted_similar_tracks = sorted(similar_tracks, key=lambda x:x[1], reverse=True)
@@ -109,4 +109,9 @@ def get_reccomendation(tracks, model, albums, liked_tracks):
             if i>int(15/divider):
                 break
 
-    return global_arr_track
+    wanted_items = set()
+    for item in global_arr_track:
+        wanted_items.add(item['id'])
+
+    # return model.filter(pk__in=wanted_items).values()
+    return wanted_items
